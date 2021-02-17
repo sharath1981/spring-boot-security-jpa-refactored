@@ -1,31 +1,40 @@
 package com.kpt.springbootsecurityjpa.domain;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import lombok.AccessLevel;
+import lombok.Setter;
 
+@Setter(AccessLevel.PRIVATE)
 public class UserDetailsImpl implements UserDetails {
     private static final long serialVersionUID = -5980778859568720428L;
     
     private String userName;
     private String password;
     private boolean active;
-    private Set<GrantedAuthority> authorities;
+    @Setter(AccessLevel.NONE)
+    private Set<GrantedAuthority> authorities = new HashSet<>();
 
     public UserDetailsImpl(User user) {
-        this.userName = user.getUserName();
-        this.password = user.getPassword();
-        this.active = user.isActive();
-        this.authorities = user.getRoles().stream()
-                                          .map(Role::getName)
-                                          .map(RoleEnum::name)
-                                          .map(SimpleGrantedAuthority::new)
-                                          .collect(Collectors.toSet());
+        Optional.ofNullable(user).map(User::getUserName).ifPresent(this::setUserName);
+        Optional.ofNullable(user).map(User::getPassword).ifPresent(this::setPassword);
+        Optional.ofNullable(user).map(User::isActive).ifPresent(this::setActive);
+        Optional.ofNullable(user)
+                .map(User::getRoles)
+                .map(Collection::stream)
+                .orElse(Stream.empty())
+                .map(Role::getName)
+                .map(RoleEnum::name)
+                .map(SimpleGrantedAuthority::new)
+                .forEach(authorities::add);
     }
     
     @Override
