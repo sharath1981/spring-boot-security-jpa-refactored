@@ -1,4 +1,4 @@
-package com.kpt.springbootsecurityjpa.domain;
+package com.kpt.springbootsecurityjpa.model;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -13,7 +13,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.NaturalId;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -21,17 +21,22 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "app_user") // postgresql doesn't allow table name USER
-public class User {
+@Table(name = "app_user")
+public class User implements UserDetails {
+    private static final long serialVersionUID = -7704887090452956388L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NaturalId
-    private String userName;
+
+    private String username;
     private String password;
-    private boolean active;
+    private boolean accountNonExpired;
+    private boolean accountNonLocked;
+    private boolean credentialsNonExpired;
+    private boolean enabled;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles = new HashSet<>();
+    private Set<Role> authorities = new HashSet<>();
 }

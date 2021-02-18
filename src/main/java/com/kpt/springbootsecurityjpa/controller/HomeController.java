@@ -1,10 +1,7 @@
 package com.kpt.springbootsecurityjpa.controller;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.security.Principal;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -12,24 +9,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class HomeController {
 
     @GetMapping
-    public Map<Object, Object> home() {
-        return getUserDetails();
-    }
-
-    private Map<Object, Object> getUserDetails() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        var map = new HashMap<>();
-        map.put(auth.getName(), auth.getAuthorities());
-        return map;
+    public Principal home(Principal principal) {
+        return principal;
     }
 
     @GetMapping("/admin")
-    public Map<Object, Object> getAdmin() {
-        return getUserDetails();
+    public Principal getAdmin(Principal principal) {
+        return principal;
     }
 
     @GetMapping("/user")
-    public Map<Object, Object> getUser() {
-        return getUserDetails();
+    public Principal getUser(Principal principal) {
+        return principal;
     }
 }

@@ -1,4 +1,4 @@
-package com.kpt.springbootsecurityjpa.domain;
+package com.kpt.springbootsecurityjpa.model;
 
 public enum RoleEnum {
     ROLE_ADMIN("ADMIN"),
@@ -14,3 +14,4 @@ public enum RoleEnum {
         return role;
     }
 }
+

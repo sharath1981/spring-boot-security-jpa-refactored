@@ -1,6 +1,5 @@
 package com.kpt.springbootsecurityjpa.config;
 
-import com.kpt.springbootsecurityjpa.domain.UserDetailsImpl;
 import com.kpt.springbootsecurityjpa.repository.UserRepository;
 
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -20,18 +19,18 @@ public class ApplicationSecurityConfiguration extends WebSecurityConfigurerAdapt
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(username->userRepository.findByUserName(username)
-                                                        .map(UserDetailsImpl::new)
+        auth.userDetailsService(username->userRepository.findByUsername(username)
                                                         .orElseThrow(()->new UsernameNotFoundException(String.format("%s doesn't exists...", username)))
         ).passwordEncoder(NoOpPasswordEncoder.getInstance());
+
     }
 
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-            .antMatchers("/admin").hasRole("ADMIN")
-            .antMatchers("/user").hasAnyRole("USER", "ADMIN")
+            .antMatchers("/admin").hasAuthority("ADMIN")
+            .antMatchers("/user").hasAnyAuthority("USER", "ADMIN")
             .antMatchers("/").permitAll()
             .and().formLogin();
     }
